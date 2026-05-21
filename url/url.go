@@ -14,13 +14,6 @@ func Web(app *fiber.App) {
 	app.Get("/", controller.Homepage)
 	app.Get("/ip", controller.IPServer)
 
-	// Modul 1 - Mahasiswa & Auth (raditya)
-	MahasiswaRoute(app)
-
-	// Modul 8 - Beasiswa & Pendaftaran (yasmin)
-	BeasiswaRoute(app)
-	PendaftaranRoute(app)
-
-	// Tambahkan route modul baru di bawah ini
-	// Contoh: DosenRoute(app)
+	// Tambahkan route modul di bawah ini setelah PR di-merge
+	// Contoh: MahasiswaRoute(app)
 }
