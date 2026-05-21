@@ -6,3 +6,9 @@ type AppInfo struct {
 	Version string `json:"version"`
 	Status  string `json:"status"`
 }
+
+// DBInfo holds MongoDB connection info
+type DBInfo struct {
+	DBString string
+	DBName   string
+}

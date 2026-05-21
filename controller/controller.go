@@ -17,9 +17,9 @@ func Homepage(c *fiber.Ctx) error {
 	return helper.SuccessResponse(c, info)
 }
 
-// IPServer handler
+// IPServer handler — mengambil public IP via icanhazip.com (pola boilerplate gocroot)
 func IPServer(c *fiber.Ctx) error {
-	ip := c.IP()
+	ip := helper.GetIPaddress()
 	return helper.SuccessResponse(c, fiber.Map{
 		"ip_address": ip,
 	})
