@@ -1,112 +1,120 @@
 package controller
 
 import (
-	"strconv"
-
+	"backend/helper"
 	"backend/model"
 
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var beasiswaList = []model.Beasiswa{
-	{
-		ID: 1,
-		Nama: "Beasiswa Prestasi/Akademik",
-		Syarat: "IPK minimal 3.5",
-		Deadline: "30 Juni 2026",
-	},
-	{
-		ID: 2,
-		Nama: "Beasiswa Anak Pos Indonesia",
-		Syarat: "Anak pegawai Pos Indonesia",
-		Deadline: "15 Juli 2026",
-	},
-	{
-		ID: 3,
-		Nama: "Beasiswa Non-Akademik",
-		Syarat: "Prestasi olahraga/seni",
-		Deadline: "20 Juli 2026",
-	},
-}
-
+// GetBeasiswa — GET /beasiswa
 func GetBeasiswa(c *fiber.Ctx) error {
-	return c.JSON(beasiswaList)
+	col := helper.GetCollection("beasiswa")
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	cursor, err := col.Find(ctx, bson.D{})
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal mengambil data beasiswa")
+	}
+	defer cursor.Close(ctx)
+
+	var list []model.Beasiswa
+	if err := cursor.All(ctx, &list); err != nil {
+		return helper.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal membaca data beasiswa")
+	}
+	if list == nil {
+		list = []model.Beasiswa{}
+	}
+	return helper.SuccessResponse(c, list)
 }
 
+// GetDetailBeasiswa — GET /beasiswa/:id
 func GetDetailBeasiswa(c *fiber.Ctx) error {
-
-	id, _ := strconv.Atoi(c.Params("id"))
-
-	for _, item := range beasiswaList {
-		if item.ID == id {
-			return c.JSON(item)
-		}
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusBadRequest, "ID tidak valid")
 	}
 
-	return c.Status(404).JSON(fiber.Map{
-		"message": "Beasiswa tidak ditemukan",
-	})
+	col := helper.GetCollection("beasiswa")
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	var item model.Beasiswa
+	if err := col.FindOne(ctx, bson.M{"_id": id}).Decode(&item); err != nil {
+		return helper.ErrorResponse(c, fiber.StatusNotFound, "Beasiswa tidak ditemukan")
+	}
+	return helper.SuccessResponse(c, item)
 }
 
+// AddBeasiswa — POST /beasiswa
 func AddBeasiswa(c *fiber.Ctx) error {
-
-	var baru model.Beasiswa
-
-	if err := c.BodyParser(&baru); err != nil {
-		return err
+	var item model.Beasiswa
+	if err := c.BodyParser(&item); err != nil {
+		return helper.ErrorResponse(c, fiber.StatusBadRequest, "Format request tidak valid")
+	}
+	if item.Nama == "" {
+		return helper.ErrorResponse(c, fiber.StatusBadRequest, "Nama beasiswa wajib diisi")
 	}
 
-	beasiswaList = append(beasiswaList, baru)
+	item.ID = primitive.NewObjectID()
+	col := helper.GetCollection("beasiswa")
+	ctx, cancel := helper.GetContext()
+	defer cancel()
 
-	return c.JSON(fiber.Map{
-		"message": "Beasiswa berhasil ditambahkan",
-		"data": baru,
-	})
+	result, err := col.InsertOne(ctx, item)
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal menyimpan data beasiswa")
+	}
+	return helper.SuccessResponse(c, fiber.Map{"inserted_id": result.InsertedID})
 }
 
+// UpdateBeasiswa — PUT /beasiswa/:id
 func UpdateBeasiswa(c *fiber.Ctx) error {
-
-	id, _ := strconv.Atoi(c.Params("id"))
-
-	var update model.Beasiswa
-
-	c.BodyParser(&update)
-
-	for i, item := range beasiswaList {
-
-		if item.ID == id {
-
-			beasiswaList[i] = update
-
-			return c.JSON(fiber.Map{
-				"message": "Beasiswa berhasil diupdate",
-				"data": update,
-			})
-		}
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusBadRequest, "ID tidak valid")
 	}
 
-	return c.Status(404).JSON(fiber.Map{
-		"message": "Beasiswa tidak ditemukan",
-	})
+	var body bson.M
+	if err := c.BodyParser(&body); err != nil {
+		return helper.ErrorResponse(c, fiber.StatusBadRequest, "Format request tidak valid")
+	}
+	delete(body, "_id")
+
+	col := helper.GetCollection("beasiswa")
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	result, err := col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": body})
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal mengupdate data beasiswa")
+	}
+	if result.MatchedCount == 0 {
+		return helper.ErrorResponse(c, fiber.StatusNotFound, "Beasiswa tidak ditemukan")
+	}
+	return helper.SuccessResponse(c, fiber.Map{"updated": result.ModifiedCount})
 }
 
+// DeleteBeasiswa — DELETE /beasiswa/:id
 func DeleteBeasiswa(c *fiber.Ctx) error {
-
-	id, _ := strconv.Atoi(c.Params("id"))
-
-	for i, item := range beasiswaList {
-
-		if item.ID == id {
-
-			beasiswaList = append(beasiswaList[:i], beasiswaList[i+1:]...)
-
-			return c.JSON(fiber.Map{
-				"message": "Beasiswa berhasil dihapus",
-			})
-		}
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusBadRequest, "ID tidak valid")
 	}
 
-	return c.Status(404).JSON(fiber.Map{
-		"message": "Beasiswa tidak ditemukan",
-	})
+	col := helper.GetCollection("beasiswa")
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	result, err := col.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		return helper.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal menghapus data beasiswa")
+	}
+	if result.DeletedCount == 0 {
+		return helper.ErrorResponse(c, fiber.StatusNotFound, "Beasiswa tidak ditemukan")
+	}
+	return helper.SuccessResponse(c, fiber.Map{"deleted": result.DeletedCount})
 }

@@ -1,9 +1,7 @@
-# Product Requirements Document (PRD)
-## Portal Informasi Akademik Kampus
+# Portal Informasi Akademik Kampus
 
----
 
-## 1. Ringkasan Produk
+## 1. Deskripsi Aplikasi
 
 **Portal Informasi Akademik Kampus** adalah aplikasi web fullstack berbasis REST API yang memudahkan pengelolaan data akademik kampus. Aplikasi ini dibangun menggunakan **Go Fiber** sebagai backend dan **MongoDB** sebagai database, di-deploy di **Alwaysdata** dengan CI/CD otomatis via GitHub Actions.
 
@@ -75,8 +73,8 @@ graph TD
 |-------|----------|-----------|
 | Homepage | `GET /` | Menampilkan nama aplikasi dan status server |
 | IP Server | `GET /ip` | Menampilkan IP address server yang sedang berjalan |
-| CORS | — | Semua endpoint bisa diakses dari frontend |
-| Auto-deploy | — | Setiap `git push` ke `main` otomatis deploy ke Alwaysdata |
+| CORS | | Semua endpoint bisa diakses dari frontend |
+| Auto-deploy | | Setiap `git push` ke `main` otomatis deploy ke Alwaysdata |
 
 ---
 
@@ -86,270 +84,450 @@ Setiap mahasiswa membangun **2 modul Backend + 1 menu Frontend** yang saling ber
 
 ---
 
-#### Modul 1 — Data Mahasiswa & Autentikasi
+#### Modul 1 Data Mahasiswa & Autentikasi
 **Deskripsi:** Mengelola data profil mahasiswa dan sistem autentikasi berbasis nomor telepon.
 
-Backend 1 — **Mahasiswa**
+Backend 1 **Mahasiswa**
 - `GET /mahasiswa` → ambil semua data mahasiswa
 - `GET /mahasiswa/:npm` → ambil data mahasiswa berdasarkan NPM
 - `POST /mahasiswa` → tambah data mahasiswa baru
 - `PUT /mahasiswa/:npm` → update data mahasiswa
 - `DELETE /mahasiswa/:npm` → hapus data mahasiswa
 
-Backend 2 — **Auth**
+Backend 2 **Auth**
 - `POST /auth/login` → login menggunakan nomor telepon, return token
 - `GET /auth/profile/:phone` → ambil profil berdasarkan nomor telepon
 
-Frontend — **Halaman Data Mahasiswa**
+Frontend **Halaman Data Mahasiswa**
 - Tabel list semua mahasiswa
 - Form tambah mahasiswa baru
 - Tombol hapus data
 
 ---
 
-#### Modul 2 — Data Dosen & Jabatan
+#### Modul 2 Data Dosen & Jabatan
 **Deskripsi:** Mengelola data dosen beserta jabatan fungsional dan struktural.
 
-Backend 1 — **Dosen**
+Backend 1 **Dosen**
 - `GET /dosen` → ambil semua data dosen
 - `GET /dosen/:nidn` → ambil data dosen berdasarkan NIDN
 - `POST /dosen` → tambah data dosen baru
 - `PUT /dosen/:nidn` → update data dosen
 - `DELETE /dosen/:nidn` → hapus data dosen
 
-Backend 2 — **Jabatan**
+Backend 2 **Jabatan**
 - `GET /jabatan` → ambil semua jabatan
 - `POST /jabatan` → tambah jabatan baru
 - `GET /jabatan/:id` → detail jabatan
 
-Frontend — **Halaman Data Dosen**
+Frontend **Halaman Data Dosen**
 - Tabel list semua dosen beserta jabatannya
 - Form tambah dosen baru
 - Filter berdasarkan jabatan
 
 ---
 
-#### Modul 3 — Mata Kuliah & KRS
+#### Modul 3 Mata Kuliah & KRS
 **Deskripsi:** Mengelola data mata kuliah dan pengambilan KRS oleh mahasiswa.
 
-Backend 1 — **Mata Kuliah**
+Backend 1 **Mata Kuliah**
 - `GET /matkul` → ambil semua mata kuliah
 - `GET /matkul/:kode` → ambil detail mata kuliah berdasarkan kode
 - `POST /matkul` → tambah mata kuliah baru
 - `PUT /matkul/:kode` → update mata kuliah
 - `DELETE /matkul/:kode` → hapus mata kuliah
 
-Backend 2 — **KRS**
+Backend 2 **KRS**
 - `GET /krs/:npm` → ambil KRS mahasiswa berdasarkan NPM
 - `POST /krs` → daftarkan mata kuliah ke KRS
 - `DELETE /krs/:id` → batalkan KRS
 
-Frontend — **Halaman Mata Kuliah**
+Frontend **Halaman Mata Kuliah**
 - Tabel list mata kuliah (kode, nama, SKS, semester)
 - Form tambah mata kuliah
 - Form input KRS mahasiswa
 
 ---
 
-#### Modul 4 — Jadwal & Ruangan
+#### Modul 4 Jadwal & Ruangan
 **Deskripsi:** Mengelola jadwal perkuliahan dan data ruangan yang tersedia.
 
-Backend 1 — **Jadwal**
+Backend 1 **Jadwal**
 - `GET /jadwal` → ambil semua jadwal kuliah
 - `GET /jadwal/:id` → detail jadwal
 - `POST /jadwal` → tambah jadwal baru
 - `PUT /jadwal/:id` → update jadwal
 - `DELETE /jadwal/:id` → hapus jadwal
 
-Backend 2 — **Ruangan**
+Backend 2 **Ruangan**
 - `GET /ruangan` → ambil semua ruangan
 - `POST /ruangan` → tambah ruangan baru
 - `GET /ruangan/:kode` → cek ketersediaan ruangan
 - `PUT /ruangan/:kode` → update data ruangan
 
-Frontend — **Halaman Jadwal Kuliah**
+Frontend **Halaman Jadwal Kuliah**
 - Tampilan jadwal per hari/minggu
 - Filter jadwal berdasarkan prodi atau dosen
 - Info ruangan yang digunakan
 
 ---
 
-#### Modul 5 — Nilai & Transkrip
+#### Modul 5 Nilai & Transkrip
 **Deskripsi:** Mengelola input nilai mahasiswa dan rekap transkrip akademik.
 
-Backend 1 — **Nilai**
+Backend 1 **Nilai**
 - `GET /nilai/:npm` → ambil semua nilai mahasiswa berdasarkan NPM
 - `POST /nilai` → input nilai mahasiswa
 - `PUT /nilai/:id` → update nilai
 - `DELETE /nilai/:id` → hapus nilai
 
-Backend 2 — **Transkrip**
+Backend 2 **Transkrip**
 - `GET /transkrip/:npm` → ambil rekap seluruh nilai dan total SKS mahasiswa
 - `GET /transkrip/:npm/ipk` → hitung dan return nilai IPK
 
-Frontend — **Halaman Input Nilai**
+Frontend **Halaman Input Nilai**
 - Form input nilai per mahasiswa per mata kuliah
 - Tabel rekap nilai dengan IPK
 - Filter berdasarkan semester
 
 ---
 
-#### Modul 6 — Absensi & Rekap
+#### Modul 6 Absensi & Rekap
 **Deskripsi:** Mengelola data kehadiran mahasiswa dan rekap absensi per periode.
 
-Backend 1 — **Absensi**
+Backend 1 **Absensi**
 - `GET /absensi/:npm` → ambil absensi mahasiswa
 - `POST /absensi` → input absensi mahasiswa
 - `PUT /absensi/:id` → update status absensi
 - `GET /absensi/hari-ini` → absensi yang masuk hari ini
 
-Backend 2 — **Rekap Absensi**
+Backend 2 **Rekap Absensi**
 - `GET /rekap-absensi/:npm` → rekap persentase kehadiran per matkul
 - `GET /rekap-absensi/matkul/:kode` → rekap semua mahasiswa dalam satu matkul
 
-Frontend — **Halaman Form Absensi**
+Frontend **Halaman Form Absensi**
 - Form input absensi dengan tanggal dan status (hadir/izin/alpha)
 - Tabel rekap persentase kehadiran per mahasiswa
 
 ---
 
-#### Modul 7 — Pengumuman & Kategori
+#### Modul 7 Pengumuman & Kategori
 **Deskripsi:** Papan pengumuman digital untuk informasi kampus dengan sistem kategori.
 
-Backend 1 — **Pengumuman**
+Backend 1 **Pengumuman**
 - `GET /pengumuman` → ambil semua pengumuman (terbaru di atas)
 - `GET /pengumuman/:id` → detail pengumuman
 - `POST /pengumuman` → tambah pengumuman baru
 - `PUT /pengumuman/:id` → update pengumuman
 - `DELETE /pengumuman/:id` → hapus pengumuman
 
-Backend 2 — **Kategori**
+Backend 2 **Kategori**
 - `GET /kategori` → ambil semua kategori
 - `POST /kategori` → tambah kategori baru
 - `GET /pengumuman/kategori/:nama` → filter pengumuman berdasarkan kategori
 
-Frontend — **Halaman Board Pengumuman**
+Frontend **Halaman Board Pengumuman**
 - Tampilan card pengumuman terbaru
 - Filter berdasarkan kategori
 - Form tambah pengumuman
 
 ---
 
-#### Modul 8 — Beasiswa & Pendaftaran
+#### Modul 8 Beasiswa & Pendaftaran
 **Deskripsi:** Informasi beasiswa yang tersedia dan sistem pendaftaran beasiswa.
 
-Backend 1 — **Beasiswa**
+Backend 1 **Beasiswa**
 - `GET /beasiswa` → ambil semua beasiswa
 - `GET /beasiswa/:id` → detail beasiswa
 - `POST /beasiswa` → tambah data beasiswa
 - `PUT /beasiswa/:id` → update beasiswa
 - `DELETE /beasiswa/:id` → hapus beasiswa
 
-Backend 2 — **Pendaftaran Beasiswa**
+Backend 2 **Pendaftaran Beasiswa**
 - `POST /beasiswa/daftar` → daftarkan mahasiswa ke beasiswa
 - `GET /beasiswa/pendaftar/:id` → lihat daftar pendaftar beasiswa
 - `GET /beasiswa/status/:npm` → cek status pendaftaran beasiswa mahasiswa
 
-Frontend — **Halaman List Beasiswa**
+Frontend **Halaman List Beasiswa**
 - Tabel list beasiswa (nama, syarat, deadline)
 - Form pendaftaran beasiswa
 - Status pendaftaran per mahasiswa
 
 ---
 
-#### Modul 9 — Perpustakaan & Peminjaman
+#### Modul 9 Perpustakaan & Peminjaman
 **Deskripsi:** Katalog buku perpustakaan dan sistem peminjaman buku oleh mahasiswa.
 
-Backend 1 — **Buku**
+Backend 1 **Buku**
 - `GET /buku` → ambil semua buku
 - `GET /buku/:id` → detail buku
 - `GET /buku/cari?judul=` → cari buku berdasarkan judul
 - `POST /buku` → tambah buku baru
 - `PUT /buku/:id` → update data buku
 
-Backend 2 — **Peminjaman**
+Backend 2 **Peminjaman**
 - `POST /peminjaman` → pinjam buku
 - `PUT /peminjaman/:id/kembali` → kembalikan buku
 - `GET /peminjaman/:npm` → riwayat peminjaman mahasiswa
 - `GET /peminjaman/aktif` → daftar buku yang sedang dipinjam
 
-Frontend — **Halaman Cari Buku**
+Frontend **Halaman Cari Buku**
 - Search bar pencarian buku
 - Tabel hasil pencarian dengan status ketersediaan
 - Form peminjaman buku
 
 ---
 
-#### Modul 10 — Prestasi & Kategori
+#### Modul 10 Prestasi & Kategori
 **Deskripsi:** Pencatatan prestasi mahasiswa beserta kategori jenis prestasi.
 
-Backend 1 — **Prestasi**
+Backend 1 **Prestasi**
 - `GET /prestasi` → ambil semua prestasi
 - `GET /prestasi/:npm` → prestasi mahasiswa tertentu
 - `POST /prestasi` → input prestasi baru
 - `PUT /prestasi/:id` → update prestasi
 - `DELETE /prestasi/:id` → hapus prestasi
 
-Backend 2 — **Kategori Prestasi**
+Backend 2 **Kategori Prestasi**
 - `GET /kategori-prestasi` → ambil semua kategori (akademik, non-akademik, dll)
 - `POST /kategori-prestasi` → tambah kategori baru
 - `GET /prestasi/kategori/:nama` → filter prestasi berdasarkan kategori
 
-Frontend — **Halaman Input Prestasi**
+Frontend **Halaman Input Prestasi**
 - Form input prestasi (nama event, tingkat, juara, tanggal)
 - Tabel list prestasi mahasiswa dengan filter kategori
 
 ---
 
-#### Modul 11 — Alumni & Lowongan Kerja
+#### Modul 11 Alumni & Lowongan Kerja
 **Deskripsi:** Data alumni kampus dan informasi lowongan kerja yang relevan.
 
-Backend 1 — **Alumni**
+Backend 1 **Alumni**
 - `GET /alumni` → ambil semua data alumni
 - `GET /alumni/:npm` → detail alumni
 - `POST /alumni` → tambah data alumni baru
 - `PUT /alumni/:npm` → update data alumni
 - `GET /alumni/angkatan/:tahun` → filter alumni berdasarkan angkatan
 
-Backend 2 — **Lowongan Kerja**
+Backend 2 **Lowongan Kerja**
 - `GET /lowongan` → ambil semua lowongan
 - `GET /lowongan/:id` → detail lowongan
 - `POST /lowongan` → tambah lowongan baru
 - `PUT /lowongan/:id` → update lowongan
 - `DELETE /lowongan/:id` → hapus lowongan
 
-Frontend — **Halaman Data Alumni & Lowongan**
+Frontend **Halaman Data Alumni & Lowongan**
 - Tabel data alumni dengan info pekerjaan
 - List lowongan kerja terbaru
 - Filter lowongan berdasarkan bidang
 
 ---
 
-#### Modul 12 — Ormawa & Kegiatan
+#### Modul 12 Ormawa & Kegiatan
 **Deskripsi:** Mengelola data organisasi mahasiswa (ormawa) dan kegiatan yang diselenggarakan.
 
-Backend 1 — **Ormawa**
+Backend 1 **Ormawa**
 - `GET /ormawa` → ambil semua data ormawa
 - `GET /ormawa/:id` → detail ormawa
 - `POST /ormawa` → tambah ormawa baru
 - `PUT /ormawa/:id` → update data ormawa
 - `DELETE /ormawa/:id` → hapus ormawa
 
-Backend 2 — **Kegiatan Ormawa**
+Backend 2 **Kegiatan Ormawa**
 - `GET /kegiatan` → ambil semua kegiatan
 - `GET /kegiatan/:id` → detail kegiatan
 - `POST /kegiatan` → tambah kegiatan baru
 - `PUT /kegiatan/:id` → update kegiatan
 - `GET /kegiatan/ormawa/:id` → ambil kegiatan berdasarkan ormawa
 
-Frontend — **Halaman Data Ormawa**
+Frontend **Halaman Data Ormawa**
 - Tabel list ormawa beserta deskripsi dan pengurus
 - List kegiatan yang diselenggarakan per ormawa
 - Form tambah ormawa dan kegiatan baru
 
 ---
 
-## 6. Pembagian Tugas (12 Mahasiswa)
+#### Modul 13 Notifikasi & Riwayat Notifikasi
+**Deskripsi:** Sistem notifikasi kampus untuk menyampaikan informasi penting kepada mahasiswa seperti pengumuman, perubahan jadwal, dan status akademik.
+
+Backend 1 **Notifikasi**
+- `GET /notifikasi` → ambil semua notifikasi
+- `GET /notifikasi/:npm` → ambil notifikasi milik mahasiswa tertentu
+- `POST /notifikasi` → kirim notifikasi baru
+- `PUT /notifikasi/:id/baca` → tandai notifikasi sebagai sudah dibaca
+- `DELETE /notifikasi/:id` → hapus notifikasi
+
+Backend 2 **Riwayat Notifikasi**
+- `GET /notifikasi/riwayat/:npm` → ambil semua riwayat notifikasi mahasiswa
+- `GET /notifikasi/belum-baca/:npm` → ambil notifikasi yang belum dibaca
+- `DELETE /notifikasi/riwayat/:npm` → hapus semua riwayat notifikasi mahasiswa
+
+Frontend **Halaman Notifikasi**
+- List notifikasi terbaru per mahasiswa
+- Indikator notifikasi belum dibaca
+- Tombol tandai semua sudah dibaca
+
+---
+
+#### Modul 14 Kuesioner & Jawaban
+**Deskripsi:** Sistem kuesioner digital untuk keperluan evaluasi pembelajaran, survei kepuasan, dan pengumpulan data akademik.
+
+Backend 1 **Kuesioner**
+- `GET /kuesioner` → ambil semua kuesioner
+- `GET /kuesioner/:id` → detail kuesioner beserta daftar pertanyaan
+- `POST /kuesioner` → buat kuesioner baru
+- `PUT /kuesioner/:id` → update kuesioner
+- `DELETE /kuesioner/:id` → hapus kuesioner
+
+Backend 2 **Jawaban Kuesioner**
+- `POST /kuesioner/jawab` → submit jawaban kuesioner
+- `GET /kuesioner/jawaban/:id` → ambil semua jawaban untuk kuesioner tertentu
+- `GET /kuesioner/status/:npm` → cek kuesioner yang sudah/belum diisi mahasiswa
+
+Frontend **Halaman Kuesioner**
+- List kuesioner yang tersedia beserta status pengisian
+- Form pengisian kuesioner dengan berbagai tipe pertanyaan
+- Rekap hasil jawaban per kuesioner
+
+---
+
+#### Modul 15 Pembayaran SPP & Riwayat
+**Deskripsi:** Mengelola data tagihan dan pembayaran SPP mahasiswa per semester.
+
+Backend 1 **Pembayaran SPP**
+- `GET /spp` → ambil semua data tagihan SPP
+- `GET /spp/:npm` → ambil tagihan SPP mahasiswa berdasarkan NPM
+- `POST /spp` → tambah tagihan SPP baru
+- `PUT /spp/:id` → update status pembayaran
+- `DELETE /spp/:id` → hapus data tagihan
+
+Backend 2 **Riwayat Pembayaran**
+- `GET /spp/riwayat/:npm` → ambil riwayat pembayaran mahasiswa
+- `GET /spp/lunas/:semester` → ambil daftar mahasiswa yang sudah lunas per semester
+- `GET /spp/belum-lunas/:semester` → ambil daftar mahasiswa yang belum lunas
+
+Frontend **Halaman Tagihan SPP**
+- Tabel tagihan SPP per semester
+- Status pembayaran (lunas/belum lunas)
+- Riwayat pembayaran mahasiswa
+
+---
+
+#### Modul 16 Surat Keterangan & Pengajuan
+**Deskripsi:** Sistem pengajuan dan pengelolaan surat keterangan mahasiswa secara digital.
+
+Backend 1 **Surat Keterangan**
+- `GET /surat` → ambil semua data surat
+- `GET /surat/:id` → detail surat
+- `POST /surat` → tambah template surat baru
+- `PUT /surat/:id` → update template surat
+- `DELETE /surat/:id` → hapus surat
+
+Backend 2 **Pengajuan Surat**
+- `POST /surat/ajukan` → ajukan permohonan surat keterangan
+- `GET /surat/pengajuan/:npm` → riwayat pengajuan surat mahasiswa
+- `PUT /surat/pengajuan/:id` → update status pengajuan (proses/selesai/ditolak)
+- `GET /surat/pengajuan/status/:status` → filter pengajuan berdasarkan status
+
+Frontend **Halaman Pengajuan Surat**
+- Form pengajuan surat keterangan (aktif kuliah, dll)
+- Status pengajuan surat
+- Riwayat surat yang pernah diajukan
+
+---
+
+#### Modul 17 PKL & Laporan
+**Deskripsi:** Mengelola data praktik kerja lapangan (PKL) mahasiswa beserta laporan dan penilaiannya.
+
+Backend 1 **PKL**
+- `GET /pkl` → ambil semua data PKL
+- `GET /pkl/:npm` → ambil data PKL mahasiswa berdasarkan NPM
+- `POST /pkl` → daftarkan PKL baru
+- `PUT /pkl/:id` → update data PKL
+- `DELETE /pkl/:id` → hapus data PKL
+
+Backend 2 **Laporan PKL**
+- `POST /pkl/laporan` → submit laporan PKL
+- `GET /pkl/laporan/:npm` → ambil laporan PKL mahasiswa
+- `PUT /pkl/laporan/:id` → update laporan PKL
+- `GET /pkl/laporan/:id/nilai` → ambil nilai PKL
+
+Frontend **Halaman Data PKL**
+- Form pendaftaran PKL (perusahaan, periode, pembimbing)
+- Status PKL mahasiswa
+- Form upload laporan dan lihat nilai
+
+---
+
+#### Modul 18 Skripsi & Bimbingan
+**Deskripsi:** Mengelola data tugas akhir/skripsi mahasiswa beserta proses bimbingan dengan dosen pembimbing.
+
+Backend 1 **Skripsi**
+- `GET /skripsi` → ambil semua data skripsi
+- `GET /skripsi/:npm` → ambil data skripsi mahasiswa
+- `POST /skripsi` → daftarkan judul skripsi
+- `PUT /skripsi/:id` → update data skripsi
+- `DELETE /skripsi/:id` → hapus data skripsi
+
+Backend 2 **Bimbingan**
+- `POST /bimbingan` → catat sesi bimbingan baru
+- `GET /bimbingan/:npm` → riwayat bimbingan mahasiswa
+- `PUT /bimbingan/:id` → update catatan bimbingan
+- `GET /bimbingan/dosen/:nidn` → daftar bimbingan per dosen
+
+Frontend **Halaman Progress Skripsi**
+- Info judul dan status skripsi mahasiswa
+- Timeline riwayat bimbingan
+- Form input sesi bimbingan baru
+
+---
+
+#### Modul 19 Fasilitas & Peminjaman Fasilitas
+**Deskripsi:** Mengelola data fasilitas kampus (ruang, alat, lab) dan sistem peminjaman/booking oleh mahasiswa.
+
+Backend 1 **Fasilitas**
+- `GET /fasilitas` → ambil semua data fasilitas
+- `GET /fasilitas/:id` → detail fasilitas
+- `POST /fasilitas` → tambah fasilitas baru
+- `PUT /fasilitas/:id` → update data fasilitas
+- `DELETE /fasilitas/:id` → hapus fasilitas
+
+Backend 2 **Peminjaman Fasilitas**
+- `POST /fasilitas/pinjam` → ajukan peminjaman fasilitas
+- `GET /fasilitas/pinjam/:npm` → riwayat peminjaman mahasiswa
+- `PUT /fasilitas/pinjam/:id` → update status peminjaman
+- `GET /fasilitas/pinjam/aktif` → daftar fasilitas yang sedang dipinjam
+
+Frontend **Halaman Booking Fasilitas**
+- List fasilitas beserta status ketersediaan
+- Form pengajuan peminjaman (tanggal, keperluan)
+- Riwayat peminjaman mahasiswa
+
+---
+
+#### Modul 20 Berita Kampus & Komentar
+**Deskripsi:** Portal berita dan informasi kampus dengan fitur komentar untuk meningkatkan interaksi civitas akademika.
+
+Backend 1 **Berita**
+- `GET /berita` → ambil semua berita (terbaru di atas)
+- `GET /berita/:id` → detail berita
+- `POST /berita` → tambah berita baru
+- `PUT /berita/:id` → update berita
+- `DELETE /berita/:id` → hapus berita
+
+Backend 2 **Komentar**
+- `GET /berita/:id/komentar` → ambil semua komentar pada berita
+- `POST /berita/:id/komentar` → tambah komentar pada berita
+- `DELETE /komentar/:id` → hapus komentar
+
+Frontend **Halaman Portal Berita**
+- List berita terbaru dalam format card
+- Halaman detail berita dengan kolom komentar
+- Form tambah berita baru
+
+---
+
+## 6. Pembagian Tugas (20 Mahasiswa)
 
 | No | Modul BE 1 | Modul BE 2 | Menu FE | Nama Mahasiswa |
 |:---:|:---|:---|:---|:---|
@@ -365,6 +543,14 @@ Frontend — **Halaman Data Ormawa**
 | 10 | Prestasi (CRUD) | Kategori Prestasi | Halaman Input Prestasi | isa |
 | 11 | Alumni (CRUD) | Lowongan Kerja (CRUD) | Halaman Alumni & Lowongan | Faris |
 | 12 | Ormawa (CRUD) | Kegiatan Ormawa (CRUD) | Halaman Data Ormawa | arip |
+| 13 | Notifikasi (CRUD) | Riwayat Notifikasi | Halaman Notifikasi |-|
+| 14 | Kuesioner (CRUD) | Jawaban Kuesioner | Halaman Kuesioner |-|
+| 15 | Pembayaran SPP (CRUD) | Riwayat Pembayaran | Halaman Tagihan SPP |-|
+| 16 | Surat Keterangan (CRUD) | Pengajuan Surat | Halaman Pengajuan Surat |-|
+| 17 | PKL (CRUD) | Laporan PKL | Halaman Data PKL |-|
+| 18 | Skripsi (CRUD) | Bimbingan (CRUD) | Halaman Progress Skripsi |-|
+| 19 | Fasilitas (CRUD) | Peminjaman Fasilitas | Halaman Booking Fasilitas |-|
+| 20 | Berita Kampus (CRUD) | Komentar Berita | Halaman Portal Berita |-|
 
 ---
 
@@ -460,9 +646,9 @@ sequenceDiagram
 
 CI/CD (Continuous Integration / Continuous Deployment) adalah praktik otomatisasi proses build dan deploy aplikasi. Setiap kali mahasiswa melakukan `git push` ke branch `main`, GitHub Actions secara otomatis akan:
 
-1. **Build** — mengkompilasi kode Go menjadi binary executable
-2. **Transfer** — mengirim binary ke server Alwaysdata via SCP (SSH Copy)
-3. **Restart** — memanggil API Alwaysdata untuk merestart aplikasi agar perubahan aktif
+1. **Build** mengkompilasi kode Go menjadi binary executable
+2. **Transfer** mengirim binary ke server Alwaysdata via SCP (SSH Copy)
+3. **Restart** memanggil API Alwaysdata untuk merestart aplikasi agar perubahan aktif
 
 ### Diagram CI/CD Pipeline
 

@@ -7,14 +7,9 @@ import (
 )
 
 func BeasiswaRoute(app *fiber.App) {
-
-	app.Get("/api/beasiswa", controller.GetBeasiswa)
-
-	app.Get("/api/beasiswa/:id", controller.GetDetailBeasiswa)
-
-	app.Post("/api/beasiswa", controller.AddBeasiswa)
-
-	app.Put("/api/beasiswa/:id", controller.UpdateBeasiswa)
-
-	app.Delete("/api/beasiswa/:id", controller.DeleteBeasiswa)
+	app.Get("/beasiswa", controller.GetBeasiswa)
+	app.Get("/beasiswa/:id", controller.GetDetailBeasiswa)
+	app.Post("/beasiswa", controller.AddBeasiswa)
+	app.Put("/beasiswa/:id", controller.UpdateBeasiswa)
+	app.Delete("/beasiswa/:id", controller.DeleteBeasiswa)
 }

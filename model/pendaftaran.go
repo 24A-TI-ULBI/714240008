@@ -1,14 +1,16 @@
 package model
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Pendaftaran struct {
-
-	NamaMahasiswa string `json:"nama"`
-	NPM           string `json:"npm"`
-	Email         string `json:"email"`
-	Semester      string `json:"semester"`
-	Prodi         string `json:"prodi"`
-	IPK           string `json:"ipk"`
-
-	Beasiswa      string `json:"beasiswa"`
-	Status        string `json:"status"`
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	NamaMahasiswa string             `bson:"nama"        json:"nama"`
+	NPM           string             `bson:"npm"         json:"npm"`
+	Email         string             `bson:"email"       json:"email"`
+	Semester      string             `bson:"semester"    json:"semester"`
+	Prodi         string             `bson:"prodi"       json:"prodi"`
+	IPK           string             `bson:"ipk"         json:"ipk"`
+	BeasiswaID    string             `bson:"beasiswa_id" json:"beasiswa_id"`
+	Beasiswa      string             `bson:"beasiswa"    json:"beasiswa"`
+	Status        string             `bson:"status"      json:"status"`
 }
